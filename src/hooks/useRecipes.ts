@@ -20,7 +20,7 @@ export function useUpdateRecipe() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: Partial<Recipe> }) => {
+    mutationFn: async ({ id, updates }: { id: number; updates: Partial<Recipe> }) => {
       const { error } = await supabase
         .from('recipes')
         .update(updates)
