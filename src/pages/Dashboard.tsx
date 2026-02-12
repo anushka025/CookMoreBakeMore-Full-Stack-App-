@@ -5,7 +5,8 @@ import RecipeCard from '@/components/RecipeCard';
 import StatsBar from '@/components/StatsBar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChefHat, LogOut, Shuffle, Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { ChefHat, LogOut, Shuffle, Loader2, Search } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -22,16 +23,18 @@ const Dashboard = () => {
   const { data: recipes = [], isLoading } = useRecipes();
   const [sheetFilter, setSheetFilter] = useState<string>('All');
   const [cookedFilter, setCookedFilter] = useState<string>('All');
+  const [search, setSearch] = useState('');
   const [randomRecipe, setRandomRecipe] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     return recipes.filter((r) => {
+      if (search && !r.name?.toLowerCase().includes(search.toLowerCase())) return false;
       if (sheetFilter !== 'All' && r.sheet !== sheetFilter) return false;
       if (cookedFilter === 'Cooked' && !r.cooked) return false;
       if (cookedFilter === 'Uncooked' && r.cooked) return false;
       return true;
     });
-  }, [recipes, sheetFilter, cookedFilter]);
+  }, [recipes, search, sheetFilter, cookedFilter]);
 
   const pickRandom = () => {
     const uncooked = recipes.filter((r) => !r.cooked);
@@ -63,6 +66,17 @@ const Dashboard = () => {
       <main className="mx-auto max-w-5xl px-4 py-6 space-y-6">
         {/* Stats */}
         <StatsBar recipes={recipes} />
+
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search recipes..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
 
         {/* Filters & Random */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
