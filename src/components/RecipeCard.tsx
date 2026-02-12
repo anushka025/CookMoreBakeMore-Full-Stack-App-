@@ -5,14 +5,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Heart, Star, ChefHat, Pencil, Check, X } from 'lucide-react';
+import { Heart, Star, ChefHat, Pencil, Check, X, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface RecipeCardProps {
   recipe: Recipe;
+  isAdmin?: boolean;
+  onDelete?: (id: number) => void;
 }
 
-const RecipeCard = ({ recipe }: RecipeCardProps) => {
+const RecipeCard = ({ recipe, isAdmin, onDelete }: RecipeCardProps) => {
   const { mutate: updateRecipe } = useUpdateRecipe();
   const [editingNotes, setEditingNotes] = useState(false);
   const [notes, setNotes] = useState(recipe.notes ?? '');
@@ -109,16 +111,28 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
           </button>
         )}
 
-        {/* Cooked Toggle */}
-        <Button
-          variant={recipe.cooked ? "default" : "outline"}
-          size="sm"
-          onClick={toggleCooked}
-          className="mt-auto gap-1.5"
-        >
-          <ChefHat className="h-4 w-4" />
-          {recipe.cooked ? 'Cooked' : 'Mark as cooked'}
-        </Button>
+        {/* Actions */}
+        <div className="mt-auto flex gap-2">
+          <Button
+            variant={recipe.cooked ? "default" : "outline"}
+            size="sm"
+            onClick={toggleCooked}
+            className="flex-1 gap-1.5"
+          >
+            <ChefHat className="h-4 w-4" />
+            {recipe.cooked ? 'Cooked' : 'Mark as cooked'}
+          </Button>
+          {isAdmin && onDelete && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => onDelete(recipe.id)}
+              className="gap-1.5"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
