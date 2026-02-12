@@ -163,7 +163,7 @@ const Dashboard = () => {
         {/* Category / Subtype Filters */}
         {sheetFilter !== 'All' && (
           <div className="flex flex-wrap gap-3">
-            {subtypes.length > 0 && (
+            {subtypes.length > 0 && sheetFilter !== 'Meat' && (
               <Select
                 value={subtypeFilter}
                 onValueChange={(val) => {
