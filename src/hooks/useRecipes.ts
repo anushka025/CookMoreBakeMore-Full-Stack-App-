@@ -6,12 +6,22 @@ export function useRecipes() {
   return useQuery({
     queryKey: ['recipes'],
     queryFn: async (): Promise<Recipe[]> => {
-      const { data, error } = await supabase
-        .from('recipes')
-        .select('*')
-        .order('name');
-      if (error) throw error;
-      return data ?? [];
+      const allData: Recipe[] = [];
+      let from = 0;
+      const pageSize = 1000;
+      while (from < 5000) {
+        const { data, error } = await supabase
+          .from('recipes')
+          .select('*')
+          .order('name')
+          .range(from, from + pageSize - 1);
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        allData.push(...data);
+        if (data.length < pageSize) break;
+        from += pageSize;
+      }
+      return allData;
     },
   });
 }
