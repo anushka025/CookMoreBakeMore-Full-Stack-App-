@@ -8,6 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ChefHat, LogOut, Shuffle, Loader2, Search } from 'lucide-react';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -24,17 +31,56 @@ const Dashboard = () => {
   const [sheetFilter, setSheetFilter] = useState<string>('All');
   const [cookedFilter, setCookedFilter] = useState<string>('All');
   const [search, setSearch] = useState('');
+  const [subtypeFilter, setSubtypeFilter] = useState<string>('All');
+  const [categoryFilter, setCategoryFilter] = useState<string>('All');
   const [randomRecipe, setRandomRecipe] = useState<string | null>(null);
+
+  const handleSheetChange = (s: string) => {
+    setSheetFilter(s);
+    setSubtypeFilter('All');
+    setCategoryFilter('All');
+  };
+
+  // Get unique subtypes for the active sheet
+  const subtypes = useMemo(() => {
+    if (sheetFilter === 'All') return [];
+    const set = new Set<string>();
+    recipes.forEach((r) => {
+      if (r.sheet === sheetFilter && r.subtype) set.add(r.subtype);
+    });
+    return Array.from(set).sort();
+  }, [recipes, sheetFilter]);
+
+  // Get unique categories based on active sheet + selected subtype
+  const categories = useMemo(() => {
+    if (sheetFilter === 'All') return [];
+    return Array.from(
+      new Set(
+        recipes
+          .filter((r) => {
+            if (r.sheet !== sheetFilter) return false;
+            if (subtypes.length > 0 && subtypeFilter !== 'All') {
+              return r.subtype === subtypeFilter;
+            }
+            return true;
+          })
+          .map((r) => r.category)
+          .filter(Boolean) as string[]
+      )
+    ).sort();
+  }, [recipes, sheetFilter, subtypeFilter, subtypes]);
 
   const filtered = useMemo(() => {
     return recipes.filter((r) => {
       if (search && !r.name?.toLowerCase().includes(search.toLowerCase())) return false;
       if (sheetFilter !== 'All' && r.sheet !== sheetFilter) return false;
+      if (subtypeFilter !== 'All' && r.subtype !== subtypeFilter) return false;
+      if (categoryFilter !== 'All' && r.category !== categoryFilter) return false;
       if (cookedFilter === 'Cooked' && !r.cooked) return false;
       if (cookedFilter === 'Uncooked' && r.cooked) return false;
       return true;
     });
-  }, [recipes, search, sheetFilter, cookedFilter]);
+  }, [recipes, search, sheetFilter, subtypeFilter, categoryFilter, cookedFilter]);
 
   const pickRandom = () => {
     const uncooked = recipes.filter((r) => !r.cooked);
@@ -86,7 +132,7 @@ const Dashboard = () => {
                 key={s}
                 variant={sheetFilter === s ? 'default' : 'secondary'}
                 className="cursor-pointer select-none"
-                onClick={() => setSheetFilter(s)}
+                onClick={() => handleSheetChange(s)}
               >
                 {s}
               </Badge>
@@ -109,7 +155,42 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        {/* Recipe Grid */}
+        {/* Category / Subtype Filters */}
+        {sheetFilter !== 'All' && (
+          <div className="flex flex-wrap gap-3">
+            {subtypes.length > 0 && (
+              <Select
+                value={subtypeFilter}
+                onValueChange={(val) => {
+                  setSubtypeFilter(val);
+                  setCategoryFilter('All');
+                }}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Subtype" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All Subtypes</SelectItem>
+                  {subtypes.map((st) => (
+                    <SelectItem key={st} value={st}>{st}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-[260px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Categories</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
