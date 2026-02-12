@@ -42,3 +42,20 @@ export function useUpdateRecipe() {
     },
   });
 }
+
+export function useDeleteRecipe() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const { error } = await supabase
+        .from('recipes')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recipes'] });
+    },
+  });
+}

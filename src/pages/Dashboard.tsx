@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRecipes } from '@/hooks/useRecipes';
+import { useAdmin } from '@/hooks/useAdmin';
+import { useRecipes, useDeleteRecipe } from '@/hooks/useRecipes';
 import RecipeCard from '@/components/RecipeCard';
+import AddRecipeDialog from '@/components/AddRecipeDialog';
 import StatsBar from '@/components/StatsBar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,7 +29,9 @@ const COOKED_FILTERS = ['All', 'Cooked', 'Uncooked'] as const;
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const isAdmin = useAdmin();
   const { data: recipes = [], isLoading } = useRecipes();
+  const { mutate: deleteRecipe } = useDeleteRecipe();
   const [sheetFilter, setSheetFilter] = useState<string>('All');
   const [cookedFilter, setCookedFilter] = useState<string>('All');
   const [search, setSearch] = useState('');
@@ -99,6 +103,7 @@ const Dashboard = () => {
             <h1 className="text-lg font-bold text-foreground">Recipe Tracker</h1>
           </div>
           <div className="flex items-center gap-3">
+            {isAdmin && <AddRecipeDialog />}
             <span className="hidden text-sm text-muted-foreground sm:block">
               {user?.email}
             </span>
@@ -203,7 +208,12 @@ const Dashboard = () => {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                isAdmin={isAdmin}
+                onDelete={(id) => deleteRecipe(id)}
+              />
             ))}
           </div>
         )}
