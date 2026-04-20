@@ -1,73 +1,78 @@
-# Welcome to your Lovable project
+# CookMoreBakeMore 🍳
 
-## Project info
+A full-stack recipe management web app built using Lovable and Supabase.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+🌐 Live: https://cookmorebakemore.lovable.app
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Overview
 
-**Use Lovable**
+CookMoreBakeMore allows users to browse a curated collection of recipes across categories like veggies, meat, and desserts. 
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Admins can manage the entire recipe catalogue directly from the UI without accessing the database.
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Frontend: Lovable (React-based builder)
+- Backend & Database: Supabase (PostgreSQL)
+- Authentication: Supabase Auth (Google OAuth + Email/Password)
+- Hosting: Lovable
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## Features
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### For Visitors
+- Browse recipes without logging in
+- Categorised view (Veggies, Meat, Desserts)
+- Clean card-based UI
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### For Users
+- Google OAuth login
+- Email + password authentication
 
-# Step 3: Install the necessary dependencies.
-npm i
+### For Admin
+- Add recipes via UI
+- Delete recipes via UI
+- Role-based access control
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## Data Pipeline
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Recipe data was originally stored in Excel and transformed using Python into a structured CSV format before being inserted into the database.
 
-**Use GitHub Codespaces**
+Key transformations:
+- Flattened multi-sheet Excel into rows
+- Extracted categories and subtypes
+- Normalized schema for database storage
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
 
-## What technologies are used for this project?
+## Security
 
-This project is built with:
+- Row Level Security (RLS) policies implemented in Supabase
+- Admin-only permissions for insert/update/delete
+- Public read access for all users
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## Future Improvements
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+- Search functionality
+- Category filters
+- User-specific interactions (ratings, favorites, notes)
+- Mobile UI improvements
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## Learnings
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- Built a full-stack app using a low-code frontend + real backend
+- Implemented authentication and role-based access control
+- Designed a clean data pipeline from raw Excel to production database
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
