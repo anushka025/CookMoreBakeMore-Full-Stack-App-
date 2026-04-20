@@ -1,5 +1,5 @@
 # CookMoreBakeMore 🍳
-
+![App Screenshot](./app-screenshot.png)
 A full-stack recipe management web app built using Lovable and Supabase.
 
 🌐 Live: https://cookmorebakemore.lovable.app
